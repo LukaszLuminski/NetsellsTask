@@ -1,26 +1,36 @@
 <template>
-  <article v-if="this.getPost" class="Post pt-5 transition__3 hidden" ref="post">
-    <header class="text-center"><h1 class="pb-4">
-      {{ formatTitle(this.getPost.title) }}
-    </h1></header>
+  <article
+    v-if="this.getPost"
+    class="Post pt-5 transition__3 hidden"
+    ref="post"
+  >
+    <header class="text-center">
+      <h1 class="pb-4">
+        {{ formatTitle(this.getPost.title) }}
+      </h1>
+    </header>
     <div
       class="Post__img mb-4"
       :style="`background-image: url('${this.getPost.image}')`"
     />
     <b-container>
-    <b-row class="Post__info-wrapper text-center"
-      >
+      <b-row class="Post__info-wrapper text-center">
         <p class="information mb-4">
           By
           <span class="information__author">{{ this.getPost.author }}</span
           ><span class="information__date ml-2">{{
             this.getPost.createdAt | formatDate
           }}</span>
-        </p></b-row>
-        <h4 class="text-left mb-4">{{ this.getPost.intro }}</h4>
-        <p class="text-left">{{ this.getPost.text }}</p>
-        <div class="text-center"><button class="Post__go-back-btn btn-orange" @click="$router.go(-1)">Go back</button></div>
-  </b-container>
+        </p></b-row
+      >
+      <h4 class="text-left mb-4">{{ this.getPost.intro }}</h4>
+      <p class="text-left">{{ this.getPost.text }}</p>
+      <div class="text-center">
+        <button class="Post__go-back-btn btn-orange" @click="$router.go(-1)">
+          Go back
+        </button>
+      </div>
+    </b-container>
   </article>
 </template>
 
@@ -38,15 +48,15 @@ export default {
   computed: {
     ...mapGetters({
       getPost: "api/getPost",
-      getError: "api/getError"
+      getError: "api/getError",
     }),
   },
   async mounted() {
     await this.getSinglePost(this.id);
     this.$refs.post.scrollTop = 0;
     setTimeout(() => {
-      this.$refs.post.classList.remove('hidden')
-    }, 400)
+      this.$refs.post.classList.remove("hidden");
+    }, 400);
   },
   methods: {
     ...mapActions({
@@ -74,12 +84,12 @@ export default {
     justify-content: center;
   }
   &__go-back-btn {
-  padding-bottom: 4px;
-  margin-top: 25px;
-  margin-bottom: 50px;
-  height: 50px;
-  width: 200px;
-  font-size: 20px;
+    padding-bottom: 4px;
+    margin-top: 25px;
+    margin-bottom: 50px;
+    height: 50px;
+    width: 200px;
+    font-size: 20px;
   }
 }
 </style>

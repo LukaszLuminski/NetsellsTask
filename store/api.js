@@ -5,6 +5,7 @@ export const state = () => ({
   article: null,
   length: null,
   error: null,
+  search: '',
   post: null,
   page: 1,
 })
@@ -14,7 +15,8 @@ export const getters = {
   getPost: state => state.post,
   getArticles: state => state.articles,
   getArticle: state => state.article,
-  getError: state => state.error
+  getError: state => state.error,
+  getSearch: state => state.search
 }
 
 export const actions = {
@@ -63,6 +65,9 @@ export const mutations = {
   setPage(state, data) {
     state.page = data
   },
+  setSearch(state, data) {
+    state.search = data
+  },
   setPost(state, data) {
     state.post = data
   },
@@ -79,17 +84,3 @@ export const mutations = {
     state.error = null
   }
 }
-//   export const actions = {
-//     async fetchMainMenu ({ commit }) {
-//       const menuItems = await this.$axios.$get('wp/v2/menu/main-menu')
-//       commit('setMainMenu', menuItems)
-//     },
-//     async fetchFooterMenuQuickLinks ({ commit }) {
-//       const menuItems = await this.$axios.$get('wp/v2/menu/footer-menu')
-//       commit('setFooterMenuQuickLinks', menuItems)
-//     },
-//     async fetchFooterMenuCorporate ({ commit }) {
-//       const menuItems = await this.$axios.$get('wp/v2/menu/footer-menu-more')
-//       commit('setFooterMenuCorporate', menuItems)
-//     }
-//   }

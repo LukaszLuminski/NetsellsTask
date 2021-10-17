@@ -29,7 +29,7 @@ export default {
     post: {
       type: Object,
       required: true,
-    },
+    }
   },
   methods: {
     truncate(text, max) {

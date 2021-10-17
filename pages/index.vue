@@ -1,7 +1,15 @@
 <template>
   <div class="Articles py-5">
     <b-container :class="this.ready ? '' : 'hidden'" class="transition__5">
-      <search-bar @find="find" />
+      <div class="Articles__search-bar pr-0 mb-4 ml-auto">
+        <b-form-input
+          size="md"
+          class="mr-2"
+          placeholder="Search"
+          v-model="search"
+          @focus="ignoreSearch = false"
+        ></b-form-input>
+      </div>
       <b-row
         v-if="this.getArticles && this.getArticles.length > 0"
         class="transition__3"
@@ -15,7 +23,7 @@
           lg="4"
           class="mb-5"
         >
-        <card :post="post" />
+          <card :post="post"/>
         </b-col>
       </b-row>
       <b-pagination
@@ -56,10 +64,9 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import Card from '../components/Card.vue';
-import SearchBar from "../components/SearchBar.vue";
+import Card from "../components/Card.vue";
 export default {
-  components: { SearchBar, Card },
+  components: { Card },
   data() {
     return {
       articles: null,
@@ -67,7 +74,9 @@ export default {
       perPage: 12,
       rows: null,
       ready: false,
-      search: "",
+      timeout: null,
+      debouncedSearch: "",
+      ignoreSearch: false
     };
   },
   computed: {
@@ -75,14 +84,35 @@ export default {
       getArticles: "api/getArticles",
       getError: "api/getError",
     }),
+    search: {
+      get() {
+        return this.debouncedSearch;
+      },
+      set(val) {
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          this.debouncedSearch = val;
+          if (!this.ignoreSearch) this.find(this.debouncedSearch);
+        }, 500);
+      },
+    },
   },
   async mounted() {
-    await this.getLength();
     this.currentPage = this.$store.state.api.page;
-    await this.getRange({ page: this.currentPage });
+    if (this.$store.state.api.search.length > 0) {
+      await this.getLength(this.$store.state.api.search);
+      await this.getRange({ search: this.$store.state.api.search, page: this.currentPage });
+      this.ignoreSearch = true
+      this.search = this.$store.state.api.search
+    } else {
+      await this.getLength();
+      await this.getRange({ page: this.currentPage });
+    }
     this.articles = this.getArticles;
     this.rows = this.$store.state.api.length;
-    this.ready = true;
+    setTimeout(() => {
+      this.ready = true;
+    }, 300)
   },
   watch: {
     currentPage(val) {
@@ -107,6 +137,7 @@ export default {
       }
     },
     search() {
+      if (!this.ignoreSearch) {
       if (this.$refs.articlesRow)
         this.$refs.articlesRow.classList.add("hidden");
       if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
@@ -117,6 +148,7 @@ export default {
           this.$refs.noResults.classList.remove("hidden");
         if (this.$refs.error) this.$refs.error.classList.remove("hidden");
       }, 700);
+      }
     },
   },
   methods: {
@@ -127,12 +159,14 @@ export default {
     }),
     ...mapMutations({
       setPage: "api/setPage",
+      setSearch: "api/setSearch",
     }),
     async find(val) {
-      this.search = val;
       if (val.length > 0) {
         await this.getLength(val);
-        await this.getRange({ search: val, page: 1 });
+        if (this.ignoreSearch) await this.getRange({ search: val, page: this.currentPage });
+        else await this.getRange({ search: val, page: 1 });
+        this.setSearch(val)
       } else {
         await this.getLength();
         await this.getRange({ page: 1 });
@@ -154,6 +188,11 @@ export default {
     position: relative;
     padding-top: 40px;
   }
+  &__search-bar {
+    max-width: 300px;
+    display: flex;
+    flex-wrap: nowrap;
+  }
   &__pagination {
     justify-content: center;
     .page-item.active .page-link {
@@ -170,14 +209,13 @@ export default {
   }
 }
 .Error {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
+  width: 100%;
+  height: 80px;
   justify-content: center;
   align-items: center;
   color: $orange;
+  position: fixed;
+  top: 40vh;
 }
 </style>
