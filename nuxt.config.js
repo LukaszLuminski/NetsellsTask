@@ -51,7 +51,7 @@ export default {
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
-        baseURL: 'https://6141b2f5357db50017b3dc1a.mockdapi.io/api/v1/Articles'
+        baseURL: 'https://6141b2f5357db50017b3dc1a.mockapi.io/api/v1/Articles'
       },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build

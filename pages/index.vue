@@ -1,15 +1,12 @@
 <template>
   <div class="Articles py-5">
     <b-container :class="this.ready ? '' : 'hidden'" class="transition__5">
-      <!-- <div class="Articles__search-bar pr-0 mb-4 ml-auto">
-        <b-form-input
-          size="md"
-          class="mr-2"
-          placeholder="Search"
-          v-model="search"
-        ></b-form-input>
-      </div> -->
-      <b-row v-if="this.getArticles" class="transition__3" ref="articlesRow">
+      <search-bar @find="find" />
+      <b-row
+        v-if="this.getArticles && this.getArticles.length > 0"
+        class="transition__3"
+        ref="articlesRow"
+      >
         <b-col
           v-for="(post, i) in this.getArticles"
           :key="i"
@@ -18,33 +15,11 @@
           lg="4"
           class="mb-5"
         >
-          <article class="Articles__card">
-            <div
-              class="Articles__img"
-              :style="`background-image: url('${post.image}')`"
-            />
-            <div class="Articles__content p-3">
-              <header>
-                <h4 class="Articles__title pb-2" @click="goTo(post.id)">
-                  {{ formatTitle(post.title) }}
-                </h4>
-              </header>
-              <p class="Articles__intro">{{ truncate(post.intro, 200) }}</p>
-            </div>
-            <footer>
-              <p class="information absolute">
-                By
-                <span class="information__author">{{ post.author }}</span
-                ><span class="information__date ml-2">{{
-                  post.createdAt | formatDate
-                }}</span>
-              </p>
-            </footer>
-          </article>
+        <card :post="post" />
         </b-col>
       </b-row>
       <b-pagination
-        v-if="this.getArticles"
+        v-if="this.getArticles && this.getArticles.length > 0"
         :key="rows"
         class="Articles__pagination"
         v-model="currentPage"
@@ -56,7 +31,16 @@
         last-text="Last"
       />
     </b-container>
-    <div v-if="this.getError" class="Error">
+    <div
+      v-if="this.getArticles && this.getArticles.length === 0"
+      class="Error"
+      ref="noResults"
+    >
+      <div class="text-center">
+        <h4 class="Error__text">No results.</h4>
+      </div>
+    </div>
+    <div v-if="this.getError" class="Error" ref="error">
       <div class="text-center">
         <h4 class="Error__text">
           {{ this.getError.message ? this.getError.message : this.getError
@@ -72,9 +56,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import TitleAndDateMixin from "../mixins/titleAndDate";
+import Card from '../components/Card.vue';
+import SearchBar from "../components/SearchBar.vue";
 export default {
-  mixins: [TitleAndDateMixin],
+  components: { SearchBar, Card },
   data() {
     return {
       articles: null,
@@ -82,8 +67,7 @@ export default {
       perPage: 12,
       rows: null,
       ready: false,
-      timeout: null,
-      debouncedSearch: "",
+      search: "",
     };
   },
   computed: {
@@ -91,18 +75,6 @@ export default {
       getArticles: "api/getArticles",
       getError: "api/getError",
     }),
-    search: {
-      get() {
-        return this.debouncedSearch;
-      },
-      set(val) {
-        if (this.timeout) clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-          this.debouncedSearch = val;
-          this.find(val);
-        }, 500);
-      },
-    },
   },
   async mounted() {
     await this.getLength();
@@ -115,7 +87,10 @@ export default {
   watch: {
     currentPage(val) {
       if (val) {
-        this.$refs.articlesRow.classList.add("hidden");
+        if (this.$refs.articlesRow)
+          this.$refs.articlesRow.classList.add("hidden");
+        if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
+        if (this.$refs.error) this.$refs.error.classList.add("hidden");
         if (this.search.length > 0) {
           this.getRange({ search: this.search, page: val });
         } else {
@@ -123,14 +98,24 @@ export default {
         }
         this.setPage(val);
         setTimeout(() => {
-          this.$refs.articlesRow.classList.remove("hidden");
+          if (this.$refs.articlesRow)
+            this.$refs.articlesRow.classList.remove("hidden");
+          if (this.$refs.noResults)
+            this.$refs.noResults.classList.remove("hidden");
+          if (this.$refs.error) this.$refs.error.classList.remove("hidden");
         }, 700);
       }
     },
     search() {
-      this.$refs.articlesRow.classList.add("hidden");
+      if (this.$refs.articlesRow)
+        this.$refs.articlesRow.classList.add("hidden");
+      if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
       setTimeout(() => {
-        this.$refs.articlesRow.classList.remove("hidden");
+        if (this.$refs.articlesRow)
+          this.$refs.articlesRow.classList.remove("hidden");
+        if (this.$refs.noResults)
+          this.$refs.noResults.classList.remove("hidden");
+        if (this.$refs.error) this.$refs.error.classList.remove("hidden");
       }, 700);
     },
   },
@@ -143,16 +128,8 @@ export default {
     ...mapMutations({
       setPage: "api/setPage",
     }),
-    formatTitle(val) {
-      return val.charAt(0).toUpperCase() + val.slice(1);
-    },
-    truncate(text, max) {
-      return text.substr(0, max - 1) + (text.length > max ? "..." : "");
-    },
-    goTo(id) {
-      this.$router.push({ path: `/${id}` });
-    },
     async find(val) {
+      this.search = val;
       if (val.length > 0) {
         await this.getLength(val);
         await this.getRange({ search: val, page: 1 });
@@ -173,34 +150,9 @@ export default {
   min-height: 100vh;
   background-color: $l-grey;
   .container {
+    min-height: 100vh;
     position: relative;
     padding-top: 40px;
-  }
-  // &__search-bar {
-  //   max-width: 300px;
-  //   display: flex;
-  //   flex-wrap: nowrap;
-  // }
-  &__card {
-    position: relative;
-    height: 100%;
-    border-radius: 5px;
-    -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.18);
-    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.18);
-    background-color: $white;
-  }
-  &__img {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    height: 250px;
-    width: 100%;
-    background-position: center top;
-  }
-  &__title {
-    cursor: pointer;
-  }
-  &__content {
-    margin-bottom: 28px;
   }
   &__pagination {
     justify-content: center;
