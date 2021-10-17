@@ -1,0 +1,55 @@
+.information {
+    color: $grey;
+  
+    &__author {
+      color: $orange;
+    }
+  
+    &__date {
+      &:before {
+        content: "\a";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #bdbdbd;
+        display: inline-block;
+        margin-bottom: 3px;
+        margin-right: 7px;
+      }
+    }
+  
+    &.absolute {
+      position: absolute;
+      left: 16px;
+      bottom: 0;
+    }
+  }
+  
+  .btn-orange {
+    border: none !important;
+    background-color: $orange;
+    border-radius: 4px;
+    color: $white;
+    &:hover {
+      background: darken($orange, 20%); /* Old browsers */
+      background: -moz-linear-gradient(
+        to bottom,
+        $orange,
+       darken($orange, 20%)
+      ); /* FF3.6-15 */
+      background: -webkit-linear-gradient(
+        to bottom,
+        $orange,
+       darken($orange, 20%)
+      ); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(to bottom, $orange, darken($orange, 20%));
+    }
+    &:active {
+      background: darken($orange, 20%);
+    }
+    &.disabled {
+        pointer-events: none;
+        background-color: lighten($grey, 8%);
+        color: darken($grey, 15%);
+    }
+  }

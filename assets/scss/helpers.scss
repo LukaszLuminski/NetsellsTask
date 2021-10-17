@@ -1,0 +1,47 @@
+// body {
+//     overflow-x: hidden;
+// }
+
+html {
+    scroll-behavior: smooth;
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.transition {
+    &__3 {
+        transition: .3s;
+    }
+    &__5 {
+        transition: .5s;
+    }
+    
+}
+
+.shadow {
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.rounded {
+    border-radius: 5px;
+}
+
+.rounded-top {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.links a {
+    color: $white !important;
+}
+
+.btn::before,
+.btn:focus,
+button,
+input
+{
+    box-shadow: none !important;
+    outline: none !important;
+}

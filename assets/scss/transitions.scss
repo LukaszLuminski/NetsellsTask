@@ -1,0 +1,8 @@
+.route-enter, .route-leave-to {
+  opacity: 0;
+}
+.route-leave-active, .route-enter-active {
+  transition-property: opacity;
+  transition-timing-function: ease-in-out;
+  transition-duration: 500ms;
+}
