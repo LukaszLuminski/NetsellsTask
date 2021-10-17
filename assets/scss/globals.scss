@@ -1,5 +1,9 @@
 .information {
     color: $grey;
+    @media (min-width: 600px) {
+      font-size: 16px;
+    }
+    font-size: 14px;
   
     &__author {
       color: $orange;
@@ -52,4 +56,18 @@
         background-color: lighten($grey, 8%);
         color: darken($grey, 15%);
     }
+  }
+
+  .Error {
+    display: flex;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 80px;
+    justify-content: center;
+    align-items: center;
+    color: $orange;
+    position: fixed;
+    top: 200px;
+  
   }

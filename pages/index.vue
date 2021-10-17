@@ -1,10 +1,9 @@
 <template>
-  <div class="Articles py-5">
+  <div class="Articles pt-2 pb-4">
     <b-container :class="this.ready ? '' : 'hidden'" class="transition__5">
       <div class="Articles__search-bar pr-0 mb-4 ml-auto">
         <b-form-input
           size="md"
-          class="mr-2"
           placeholder="Search"
           v-model="search"
           @focus="ignoreSearch = false"
@@ -26,7 +25,7 @@
           <card :post="post"/>
         </b-col>
       </b-row>
-      <b-pagination
+      <div class="Articles__pagination-wrapper"><b-pagination
         v-if="this.getArticles && this.getArticles.length > 0"
         :key="rows"
         class="Articles__pagination"
@@ -37,7 +36,8 @@
         prev-text="Prev"
         next-text="Next"
         last-text="Last"
-      />
+      /></div>
+      
     </b-container>
     <div
       v-if="this.getArticles && this.getArticles.length === 0"
@@ -52,10 +52,10 @@
       <div class="text-center">
         <h4 class="Error__text">
           {{ this.getError.message ? this.getError.message : this.getError
-          }}{{ "! Please refresh page." }}
+          }}! Please refresh page.
         </h4>
         <h4 class="Error__text">
-          {{ "If the problem persists, try again later." }}
+         If the problem persists, try again later.
         </h4>
       </div>
     </div>
@@ -189,12 +189,25 @@ export default {
     padding-top: 40px;
   }
   &__search-bar {
-    max-width: 300px;
+    @media (min-width: 500px) {
+      max-width: 300px;
+    }
+    width: 100%;
     display: flex;
     flex-wrap: nowrap;
   }
+  &__pagination-wrapper {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   &__pagination {
     justify-content: center;
+    -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+  width: fit-content;
     .page-item.active .page-link {
       color: $white !important;
       background-color: $orange !important;
@@ -207,15 +220,5 @@ export default {
   .form-control:focus {
     border-color: lighten($orange, 10%);
   }
-}
-.Error {
-  display: flex;
-  width: 100%;
-  height: 80px;
-  justify-content: center;
-  align-items: center;
-  color: $orange;
-  position: fixed;
-  top: 40vh;
 }
 </style>

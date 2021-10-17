@@ -1,7 +1,7 @@
 <template>
   <article
     v-if="this.getPost"
-    class="Post pt-5 transition__3 hidden"
+    class="Post pt-4 transition__3 hidden"
     ref="post"
   >
     <header class="text-center">
@@ -32,6 +32,16 @@
       </div>
     </b-container>
   </article>
+  <div v-else class="Error" ref="error">
+      <div class="text-center">
+        <h4 class="Error__text">
+          An error occurred and the content is currently unavailable. Please refresh page.
+        </h4>
+        <h4 class="Error__text">
+         If the problem persists, try again later.
+        </h4>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -53,9 +63,9 @@ export default {
   },
   async mounted() {
     await this.getSinglePost(this.id);
-    this.$refs.post.scrollTop = 0;
+    if (this.$refs.post) this.$refs.post.scrollTop = 0;
     setTimeout(() => {
-      this.$refs.post.classList.remove("hidden");
+      if (this.$refs.post) this.$refs.post.classList.remove("hidden");
     }, 400);
   },
   methods: {
@@ -69,12 +79,27 @@ export default {
 <style lang="scss">
 .Post {
   h1 {
-    font-size: 54px;
+    @media (min-width: 768px) {
+     font-size: 54px; 
+    }
+    font-size: 34px;
     font-weight: 700;
+  }
+  h4 {
+    @media (min-width: 768px) {
+     font-size:24px; 
+    }
+    font-size:19px; 
   }
   &__img {
     width: 100%;
-    height: 600px;
+    @media (min-width: 768px) {
+     height: 400px; 
+    }
+    @media (min-width: 992px) {
+     height: 600px; 
+    }
+    height: 230px;
     background-position: center top;
     background-size: cover;
     background-repeat: no-repeat;
@@ -86,7 +111,7 @@ export default {
   &__go-back-btn {
     padding-bottom: 4px;
     margin-top: 25px;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     height: 50px;
     width: 200px;
     font-size: 20px;

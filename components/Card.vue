@@ -46,18 +46,28 @@ export default {
   position: relative;
   height: 100%;
   border-radius: 5px;
-  -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.18);
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.18);
+  -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
   background-color: $white;
   &__img {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    height: 250px;
+    @media (min-width: 992px) {
+      height: 250px;
+    }
+    height: 220px;
     width: 100%;
     background-position: center top;
   }
   &__title {
     cursor: pointer;
+  }
+  &__intro {
+    color: darken($grey, 40%);
+    @media (min-width: 600px) {
+      font-size: 16px;
+    }
+    font-size: 15px;
   }
   &__content {
     margin-bottom: 28px;
