@@ -39,24 +39,8 @@
           last-text="Last"
         />
       </div>
-      <div
-        v-if="this.getArticles && this.getArticles.length === 0"
-        class="Error"
-        ref="noResults"
-      >
-        <div class="text-center">
-          <h4 class="Error__text">No results.</h4>
-        </div>
-      </div>
-      <div v-if="this.getError" class="Error" ref="error">
-        <div class="text-center">
-          <h4 class="Error__text">
-            {{ this.getError.message ? this.getError.message : this.getError }}!
-            Please refresh page.
-          </h4>
-          <h4 class="Error__text">If the problem persists, try again later.</h4>
-        </div>
-      </div>
+      <error v-if="this.getArticles && this.getArticles.length === 0" ref="noResults" content="No results."/>
+      <error v-if="this.getError" :apiError="this.getError" content="If the problem persists, try again later."/>
     </b-container>
     <div
     ref="spinner"
@@ -76,8 +60,9 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Card from "../components/Card.vue";
+import Error from '../components/Error.vue';
 export default {
-  components: { Card },
+  components: { Card, Error },
   data() {
     return {
       articles: null,
@@ -144,6 +129,7 @@ export default {
           this.getRange({ page: val });
         }
         this.setPage(val);
+        window.scrollTo(0, 0);
         setTimeout(() => {
           if (this.$refs.articlesRow)
             this.$refs.articlesRow.classList.remove("hidden");
@@ -157,12 +143,12 @@ export default {
       if (!this.ignoreSearch) {
         if (this.$refs.articlesRow)
           this.$refs.articlesRow.classList.add("hidden");
-        if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
+        if (this.$refs.noResults) this.$refs.noResults.$el.classList.add("hidden");
         setTimeout(() => {
           if (this.$refs.articlesRow)
             this.$refs.articlesRow.classList.remove("hidden");
           if (this.$refs.noResults)
-            this.$refs.noResults.classList.remove("hidden");
+            this.$refs.noResults.$el.classList.remove("hidden");
           if (this.$refs.error) this.$refs.error.classList.remove("hidden");
         }, 700);
       }

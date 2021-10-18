@@ -1,6 +1,6 @@
 <template>
   <article class="Card">
-    <div class="Card__img" :style="`background-image: url('${post.image}')`" />
+    <b-img-lazy class="Card__img" :src="post.image" />
     <div class="Card__content p-3">
       <header>
         <h4 class="Card__title pb-2" @click="goTo(post.id)">
@@ -10,26 +10,25 @@
       <p class="Card__intro">{{ truncate(post.intro, 200) }}</p>
     </div>
     <footer>
-      <p class="information absolute">
-        By
-        <span class="information__author">{{ post.author }}</span
-        ><span class="information__date ml-2">{{
-          post.createdAt | formatDate
-        }}</span>
-      </p>
+      <post-info
+        :absolute="true"
+        :postInfo="{ author: post.author, date: post.createdAt }"
+      />
     </footer>
   </article>
 </template>
 
 <script>
-import TitleAndDateMixin from "../mixins/titleAndDate";
+import titleMixin from "../mixins/titleMixin";
+import PostInfo from "./PostInfo.vue";
 export default {
-  mixins: [TitleAndDateMixin],
+  components: { PostInfo },
+  mixins: [titleMixin],
   props: {
     post: {
       type: Object,
       required: true,
-    }
+    },
   },
   methods: {
     truncate(text, max) {
