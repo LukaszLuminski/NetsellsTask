@@ -34,9 +34,7 @@
       </b-container>
     </article>
     <!-- Reusable error message component --> 
-    <error-message v-if="!this.getPost && this.ready" ref="error" />
-    <div v-if="!this.getPost && this.ready" class="Error" ref="error" :content="this.errorMessage">
-    </div>
+    <error-message v-if="!this.getPost && this.ready" ref="error" :top="200" :content="this.errorMessage" />
   </div>
 </template>
 
@@ -117,12 +115,8 @@ export default {
     justify-content: center;
   }
   &__go-back-btn {
-    padding-bottom: 4px;
     margin-top: 25px;
     margin-bottom: 40px;
-    height: 50px;
-    width: 200px;
-    font-size: 20px;
   }
 }
 </style>

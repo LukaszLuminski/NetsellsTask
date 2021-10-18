@@ -32,6 +32,8 @@ export default {
 </script>
 
 <style lang="scss">
+// style import for Storybook
+@import "assets/scss/main.scss";
 .information {
   color: $grey;
   @media (min-width: 600px) {

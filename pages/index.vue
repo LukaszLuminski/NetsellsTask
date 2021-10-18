@@ -47,8 +47,8 @@
       </div>
 
       <!-- Reusable error message components in case of no articles found or an error response from Api --> 
-      <error-message v-if="this.getArticles && this.getArticles.length === 0" ref="noResults" content="No results."/>
-      <error-message v-if="this.getError" :apiError="this.getError" content="If the problem persists, try again later."/>
+      <error-message v-if="this.getArticles && this.getArticles.length === 0" ref="noResults" content="No results." :top="200"/>
+      <error-message v-if="this.getError" :apiError="this.getError" content="If the problem persists, try again later." :top="200"/>
     </b-container>
 
     <!-- Spinner displayed before the app renders --> 
@@ -150,7 +150,7 @@ export default {
         if (this.$refs.articlesRow)
           this.$refs.articlesRow.classList.add("hidden");
         if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
-        if (this.$refs.error) this.$refs.error.classList.add("hidden");
+        if (this.$refs.error) this.$refs.error.$el.classList.add("hidden");
         if (this.search.length > 0) {
           this.getRange({ search: this.search, page: val });
         } else {
@@ -163,7 +163,7 @@ export default {
             this.$refs.articlesRow.classList.remove("hidden");
           if (this.$refs.noResults)
             this.$refs.noResults.classList.remove("hidden");
-          if (this.$refs.error) this.$refs.error.classList.remove("hidden");
+          if (this.$refs.error) this.$refs.error.$el.classList.remove("hidden");
         }, 700);
       }
     },

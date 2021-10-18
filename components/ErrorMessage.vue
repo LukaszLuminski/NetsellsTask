@@ -1,5 +1,5 @@
 <template>
-  <div class="Error" ref="error">
+  <div class="Error" :style="`top: ${this.top}px`">
     <div class="text-center">
       <h4 v-if="this.apiError" class="Error__text">
         {{ this.apiError.message ? this.apiError.message : this.apiError }}!
@@ -21,11 +21,20 @@ export default {
       type: String,
       required: true,
     },
+    // how far from the page top 
+    // this absolute component will be positioned, to not cover
+    // CTAs (like search input field)
+    top: {
+      type: Number,
+      required: true
+    }
   },
 };
 </script>
 
 <style lang="scss">
+// style import for Storybook
+@import "assets/scss/main.scss";
 .Error {
   display: flex;
   padding-left: 16px;
@@ -36,7 +45,6 @@ export default {
   color: $orange;
   position: absolute;
   left: 0;
-  right: 0;
-  top: 200px;
+  right: 0
 }
 </style>
