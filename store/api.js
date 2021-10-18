@@ -2,7 +2,6 @@
 
 export const state = () => ({
   articles: null,
-  article: null,
   length: null,
   error: null,
   search: '',
@@ -15,7 +14,6 @@ export const getters = {
   getPage: state => state.page,
   getPost: state => state.post,
   getArticles: state => state.articles,
-  getArticle: state => state.article,
   getError: state => state.error,
   getSearch: state => state.search
 }
