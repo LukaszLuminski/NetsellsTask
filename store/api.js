@@ -8,6 +8,7 @@ export const state = () => ({
   search: '',
   post: null,
   page: 1,
+  loaded: false
 })
 
 export const getters = {
@@ -70,6 +71,9 @@ export const mutations = {
   },
   setPost(state, data) {
     state.post = data
+  },
+  setAppLoaded(state) {
+    state.loaded = true
   },
   setArticles(state, data) {
     state.articles = data

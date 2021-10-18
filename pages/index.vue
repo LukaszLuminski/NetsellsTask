@@ -22,41 +22,52 @@
           lg="4"
           class="mb-5"
         >
-          <card :post="post"/>
+          <card :post="post" />
         </b-col>
       </b-row>
-      <div class="Articles__pagination-wrapper"><b-pagination
-        v-if="this.getArticles && this.getArticles.length > 0"
-        :key="rows"
-        class="Articles__pagination"
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        first-text="First"
-        prev-text="Prev"
-        next-text="Next"
-        last-text="Last"
-      /></div>
-      
+      <div class="Articles__pagination-wrapper">
+        <b-pagination
+          v-if="this.getArticles && this.getArticles.length > 0"
+          :key="rows"
+          class="Articles__pagination"
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          first-text="First"
+          prev-text="Prev"
+          next-text="Next"
+          last-text="Last"
+        />
+      </div>
+      <div
+        v-if="this.getArticles && this.getArticles.length === 0"
+        class="Error"
+        ref="noResults"
+      >
+        <div class="text-center">
+          <h4 class="Error__text">No results.</h4>
+        </div>
+      </div>
+      <div v-if="this.getError" class="Error" ref="error">
+        <div class="text-center">
+          <h4 class="Error__text">
+            {{ this.getError.message ? this.getError.message : this.getError }}!
+            Please refresh page.
+          </h4>
+          <h4 class="Error__text">If the problem persists, try again later.</h4>
+        </div>
+      </div>
     </b-container>
     <div
-      v-if="this.ready && this.getArticles && this.getArticles.length === 0"
-      class="Error"
-      ref="noResults"
+    ref="spinner"
+      class="Articles__spinner-wrapper transition__5"
+      :class="this.ready || this.loaded ? 'hidden' : ''"
     >
       <div class="text-center">
-        <h4 class="Error__text">No results.</h4>
-      </div>
-    </div>
-    <div v-if="this.ready && this.getError" class="Error" ref="error">
-      <div class="text-center">
-        <h4 class="Error__text">
-          {{ this.getError.message ? this.getError.message : this.getError
-          }}! Please refresh page.
-        </h4>
-        <h4 class="Error__text">
-         If the problem persists, try again later.
-        </h4>
+        <b-spinner
+          class="Articles__spinner"
+          label="Text Centered"
+        ></b-spinner>
       </div>
     </div>
   </div>
@@ -76,7 +87,8 @@ export default {
       ready: false,
       timeout: null,
       debouncedSearch: "",
-      ignoreSearch: false
+      ignoreSearch: false,
+      loaded: false
     };
   },
   computed: {
@@ -99,11 +111,15 @@ export default {
   },
   async mounted() {
     this.currentPage = this.$store.state.api.page;
+    this.loaded = this.$store.state.api.loaded;
     if (this.$store.state.api.search.length > 0) {
       await this.getLength(this.$store.state.api.search);
-      await this.getRange({ search: this.$store.state.api.search, page: this.currentPage });
-      this.ignoreSearch = true
-      this.search = this.$store.state.api.search
+      await this.getRange({
+        search: this.$store.state.api.search,
+        page: this.currentPage,
+      });
+      this.ignoreSearch = true;
+      this.search = this.$store.state.api.search;
     } else {
       await this.getLength();
       await this.getRange({ page: this.currentPage });
@@ -112,7 +128,8 @@ export default {
     this.rows = this.$store.state.api.length;
     setTimeout(() => {
       this.ready = true;
-    }, 300)
+      this.setAppLoaded()
+    }, 300);
   },
   watch: {
     currentPage(val) {
@@ -138,18 +155,25 @@ export default {
     },
     search() {
       if (!this.ignoreSearch) {
-      if (this.$refs.articlesRow)
-        this.$refs.articlesRow.classList.add("hidden");
-      if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
-      setTimeout(() => {
         if (this.$refs.articlesRow)
-          this.$refs.articlesRow.classList.remove("hidden");
-        if (this.$refs.noResults)
-          this.$refs.noResults.classList.remove("hidden");
-        if (this.$refs.error) this.$refs.error.classList.remove("hidden");
-      }, 700);
+          this.$refs.articlesRow.classList.add("hidden");
+        if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
+        setTimeout(() => {
+          if (this.$refs.articlesRow)
+            this.$refs.articlesRow.classList.remove("hidden");
+          if (this.$refs.noResults)
+            this.$refs.noResults.classList.remove("hidden");
+          if (this.$refs.error) this.$refs.error.classList.remove("hidden");
+        }, 700);
       }
     },
+    ready(val) {
+      if (val) {
+        setTimeout(() => {
+          this.$refs.spinner.style.display = 'none'
+        }, 400)
+      }
+    }
   },
   methods: {
     ...mapActions({
@@ -160,13 +184,15 @@ export default {
     ...mapMutations({
       setPage: "api/setPage",
       setSearch: "api/setSearch",
+      setAppLoaded: "api/setAppLoaded"
     }),
     async find(val) {
       if (val.length > 0) {
         await this.getLength(val);
-        if (this.ignoreSearch) await this.getRange({ search: val, page: this.currentPage });
+        if (this.ignoreSearch)
+          await this.getRange({ search: val, page: this.currentPage });
         else await this.getRange({ search: val, page: 1 });
-        this.setSearch(val)
+        this.setSearch(val);
       } else {
         await this.getLength();
         await this.getRange({ page: 1 });
@@ -206,8 +232,8 @@ export default {
   &__pagination {
     justify-content: center;
     -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
-  width: fit-content;
+    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
+    width: fit-content;
     .page-item.active .page-link {
       color: $white !important;
       background-color: $orange !important;
@@ -219,6 +245,21 @@ export default {
   }
   .form-control:focus {
     border-color: lighten($orange, 10%);
+  }
+  &__spinner-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__spinner {
+    color: $orange;
+    width: 4em;
+    height: 4em;
   }
 }
 </style>
