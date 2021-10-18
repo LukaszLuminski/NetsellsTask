@@ -1,8 +1,8 @@
 <template>
   <div class="Error" ref="error">
     <div class="text-center">
-      <h4 v-if="apiError" class="Error__text">
-        {{ this.getError.message ? this.getError.message : this.getError }}!
+      <h4 v-if="this.apiError" class="Error__text">
+        {{ this.apiError.message ? this.apiError.message : this.apiError }}!
         Please refresh page.
       </h4>
       <h4 class="Error__text" v-html="content" />

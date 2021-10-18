@@ -2,6 +2,8 @@
   <div class="Articles pt-2 pb-4">
     <b-container :class="this.ready ? '' : 'hidden'" class="transition__5">
       <div class="Articles__search-bar pr-0 mb-4 ml-auto">
+
+        <!-- Search input --> 
         <b-form-input
           size="md"
           placeholder="Search"
@@ -22,9 +24,13 @@
           lg="4"
           class="mb-5"
         >
+
+        <!-- Reusable post card component --> 
           <card :post="post" />
         </b-col>
       </b-row>
+
+      <!-- Pagination --> 
       <div class="Articles__pagination-wrapper">
         <b-pagination
           v-if="this.getArticles && this.getArticles.length > 0"
@@ -39,9 +45,13 @@
           last-text="Last"
         />
       </div>
-      <error v-if="this.getArticles && this.getArticles.length === 0" ref="noResults" content="No results."/>
-      <error v-if="this.getError" :apiError="this.getError" content="If the problem persists, try again later."/>
+
+      <!-- Reusable error message components in case of no articles found or an error response from Api --> 
+      <error-message v-if="this.getArticles && this.getArticles.length === 0" ref="noResults" content="No results."/>
+      <error-message v-if="this.getError" :apiError="this.getError" content="If the problem persists, try again later."/>
     </b-container>
+
+    <!-- Spinner displayed before the app renders --> 
     <div
     ref="spinner"
       class="Articles__spinner-wrapper transition__5"
@@ -60,9 +70,9 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Card from "../components/Card.vue";
-import Error from '../components/Error.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 export default {
-  components: { Card, Error },
+  components: { Card, ErrorMessage },
   data() {
     return {
       articles: null,
@@ -72,6 +82,7 @@ export default {
       ready: false,
       timeout: null,
       debouncedSearch: "",
+      //for not triggering another Api call, when not needed
       ignoreSearch: false,
       loaded: false
     };
@@ -81,6 +92,8 @@ export default {
       getArticles: "api/getArticles",
       getError: "api/getError",
     }),
+
+    // getter and debounced setter for search input value
     search: {
       get() {
         return this.debouncedSearch;
@@ -95,8 +108,16 @@ export default {
     },
   },
   async mounted() {
+
+    // renders previously opened page
     this.currentPage = this.$store.state.api.page;
+
+    // bounds data variable with a Vuex state item, which marks whether
+    // the app has been rendered yet
     this.loaded = this.$store.state.api.loaded;
+
+    // depending on whether a search input value is presents, 
+    // fetches appropriate articles and array length
     if (this.$store.state.api.search.length > 0) {
       await this.getLength(this.$store.state.api.search);
       await this.getRange({
@@ -112,11 +133,18 @@ export default {
     this.articles = this.getArticles;
     this.rows = this.$store.state.api.length;
     setTimeout(() => {
+
+      // page content is being revealed
       this.ready = true;
+
+      // marking app rendering as finished (no more welcome spinner)
       this.setAppLoaded()
     }, 300);
   },
   watch: {
+
+    // what happens, when a pagination page changes 
+    // (for appropriate styling and different Api calls, depending of the search input value)
     currentPage(val) {
       if (val) {
         if (this.$refs.articlesRow)
@@ -139,7 +167,10 @@ export default {
         }, 700);
       }
     },
+
+    // captures changes of the search input value
     search() {
+      // when the search doesn't have to be ignored, just for appropriate styling (fade-in, fade-out)
       if (!this.ignoreSearch) {
         if (this.$refs.articlesRow)
           this.$refs.articlesRow.classList.add("hidden");
@@ -153,6 +184,8 @@ export default {
         }, 700);
       }
     },
+
+    // if the page has been mounted, spinner dissapears
     ready(val) {
       if (val) {
         setTimeout(() => {
@@ -172,14 +205,24 @@ export default {
       setSearch: "api/setSearch",
       setAppLoaded: "api/setAppLoaded"
     }),
-    async find(val) {
+
+    //searching articles by key word(s)
+    async find(val) { 
       if (val.length > 0) {
         await this.getLength(val);
+        // in the first scenario user returns from a post page to the same page as before.
+        // used when search input value hasn't changed 
         if (this.ignoreSearch)
           await this.getRange({ search: val, page: this.currentPage });
+
+        // used when a new search input value has been provided (displays new results from page 1)  
         else await this.getRange({ search: val, page: 1 });
+
+        // sets current search value in Vuex state
         this.setSearch(val);
       } else {
+
+        // if there is no search input value, fetches unfiltered, paginated articles 
         await this.getLength();
         await this.getRange({ page: 1 });
       }

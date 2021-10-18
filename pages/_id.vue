@@ -16,6 +16,8 @@
       />
       <b-container>
         <b-row class="Post__info-wrapper text-center">
+
+          <!-- Reusable styled component containing the post's author & date --> 
           <post-info
             class="mb-4"
             :postInfo="{
@@ -26,18 +28,14 @@
         <h4 class="text-left mb-4">{{ this.getPost.intro }}</h4>
         <p class="text-left">{{ this.getPost.text }}</p>
         <div class="text-center">
+          <!-- Reusable button component --> 
           <btn label="Go back" @clicked="$router.go(-1)" class="Post__go-back-btn" />
         </div>
       </b-container>
     </article>
-    <div v-if="!this.getPost && this.ready" class="Error" ref="error">
-      <div class="text-center">
-        <h4 class="Error__text">
-          An error occurred and the content is currently unavailable. Please
-          refresh page.
-        </h4>
-        <h4 class="Error__text">If the problem persists, try again later.</h4>
-      </div>
+    <!-- Reusable error message component --> 
+    <error-message v-if="!this.getPost && this.ready" ref="error" />
+    <div v-if="!this.getPost && this.ready" class="Error" ref="error" :content="this.errorMessage">
     </div>
   </div>
 </template>
@@ -46,9 +44,10 @@
 import { mapGetters, mapActions } from "vuex";
 import Btn from "../components/Btn.vue";
 import PostInfo from "../components/PostInfo.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
 import titleMixin from "../mixins/titleMixin";
 export default {
-  components: { PostInfo, Btn },
+  components: { PostInfo, Btn, ErrorMessage },
   async asyncData({ params }) {
     const id = params.id;
     return {
@@ -58,6 +57,8 @@ export default {
   data() {
     return {
       ready: false,
+      errorMessage:
+        'An error occurred and the content is currently unavailable. Please refresh page.<br />If the problem persists, try again later."',
     };
   },
   mixins: [titleMixin],
