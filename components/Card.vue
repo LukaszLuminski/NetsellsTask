@@ -1,5 +1,5 @@
 <template>
-  <article class="Card" :style="this.storybook ? 'max-width: 350px; min-height: 500px' : ''">
+  <article class="Card">
     <b-img-lazy class="Card__img" :src="post.image" />
     <div class="Card__content p-3">
       <header>
@@ -30,17 +30,6 @@ export default {
       required: true,
     },
   },
-  data () {
-    return {
-      storybook: null
-    }
-  },
-  mounted () {
-    window.location.href.includes('viewMode=story') ||
-    window.location.href.includes('viewMode=docs')
-      ? (this.storybook = true)
-      : (this.storybook = false)
-  },
   methods: {
     truncate(text, max) {
       return text.substr(0, max - 1) + (text.length > max ? "..." : "");
@@ -58,6 +47,7 @@ export default {
   position: relative;
   height: 100%;
   border-radius: 5px;
+  max-width: 350px;
   -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
   background-color: $white;
