@@ -181,7 +181,7 @@ export default {
           if (this.$refs.noResults)
             this.$refs.noResults.$el.classList.remove("hidden");
           if (this.$refs.error) this.$refs.error.classList.remove("hidden");
-        }, 1000);
+        }, 700);
       }
     },
 
