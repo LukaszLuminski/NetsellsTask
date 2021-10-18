@@ -1,5 +1,5 @@
 <template>
-  <article
+<div><article
     v-if="this.getPost"
     class="Post pt-4 transition__3 hidden"
     ref="post"
@@ -32,7 +32,7 @@
       </div>
     </b-container>
   </article>
-  <div v-else class="Error" ref="error">
+  <div v-if="!this.getPost && this.ready" class="Error" ref="error">
       <div class="text-center">
         <h4 class="Error__text">
           An error occurred and the content is currently unavailable. Please refresh page.
@@ -42,6 +42,7 @@
         </h4>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -54,6 +55,11 @@ export default {
       id,
     };
   },
+  data () {
+    return {
+      ready: false
+    }
+  },
   mixins: [TitleAndDateMixin],
   computed: {
     ...mapGetters({
@@ -65,6 +71,7 @@ export default {
     await this.getSinglePost(this.id);
     if (this.$refs.post) this.$refs.post.scrollTop = 0;
     setTimeout(() => {
+      this.ready = true
       if (this.$refs.post) this.$refs.post.classList.remove("hidden");
     }, 400);
   },

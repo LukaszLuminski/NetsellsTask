@@ -40,7 +40,7 @@
       
     </b-container>
     <div
-      v-if="this.getArticles && this.getArticles.length === 0"
+      v-if="this.ready && this.getArticles && this.getArticles.length === 0"
       class="Error"
       ref="noResults"
     >
@@ -48,7 +48,7 @@
         <h4 class="Error__text">No results.</h4>
       </div>
     </div>
-    <div v-if="this.getError" class="Error" ref="error">
+    <div v-if="this.ready && this.getError" class="Error" ref="error">
       <div class="text-center">
         <h4 class="Error__text">
           {{ this.getError.message ? this.getError.message : this.getError
