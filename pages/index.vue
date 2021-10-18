@@ -1,7 +1,7 @@
 <template>
   <div class="Articles pt-2 pb-4">
     <b-container :class="this.ready ? '' : 'hidden'" class="transition__5">
-      <div class="Articles__search-bar pr-0 mb-4 ml-auto">
+      <div class="Articles__search-bar pr-0 mb-4">
 
         <!-- Search input --> 
         <b-form-input
@@ -26,7 +26,7 @@
         >
 
         <!-- Reusable post card component --> 
-          <card :post="post" />
+          <card :post="post" class="mx-auto"/>
         </b-col>
       </b-row>
 
@@ -139,7 +139,7 @@ export default {
 
       // marking app rendering as finished (no more welcome spinner)
       this.setAppLoaded()
-    }, 300);
+    }, 400);
   },
   watch: {
 
@@ -164,7 +164,7 @@ export default {
           if (this.$refs.noResults)
             this.$refs.noResults.classList.remove("hidden");
           if (this.$refs.error) this.$refs.error.$el.classList.remove("hidden");
-        }, 700);
+        }, 1000);
       }
     },
 
@@ -181,7 +181,7 @@ export default {
           if (this.$refs.noResults)
             this.$refs.noResults.$el.classList.remove("hidden");
           if (this.$refs.error) this.$refs.error.classList.remove("hidden");
-        }, 700);
+        }, 1000);
       }
     },
 
@@ -244,10 +244,14 @@ export default {
     padding-top: 40px;
   }
   &__search-bar {
-    @media (min-width: 500px) {
+    @media (min-width: 768px) {
       max-width: 300px;
+      margin-left: auto;
+      margin-right: 0;
     }
-    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 350px;
     display: flex;
     flex-wrap: nowrap;
   }
