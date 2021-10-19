@@ -139,7 +139,7 @@ export default {
 
       // marking app rendering as finished (no more welcome spinner)
       this.setAppLoaded()
-    }, 400);
+    }, 800);
   },
   watch: {
 

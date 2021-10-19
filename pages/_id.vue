@@ -72,7 +72,7 @@ export default {
     setTimeout(() => {
       this.ready = true;
       if (this.$refs.post) this.$refs.post.classList.remove("hidden");
-    }, 400);
+    }, 800);
   },
   methods: {
     ...mapActions({

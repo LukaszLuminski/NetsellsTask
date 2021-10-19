@@ -56,8 +56,6 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     width: 100%;
-    max-height: 263px;
-    background-position: center top;
   }
   &__title {
     overflow: hidden;
