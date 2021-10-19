@@ -2,9 +2,9 @@
 export const actions = {
     async nuxtServerInit ({ dispatch }) {
       const toDispatch = [
-        dispatch('api/getLength'),
-        dispatch('api/getRange'),
-        dispatch('api/getSinglePost')
+        dispatch('api/fetchLength'),
+        dispatch('api/fetchRange'),
+        dispatch('api/fetchSinglePost')
       ]
       await Promise.all(toDispatch)
     }

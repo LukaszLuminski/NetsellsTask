@@ -1,5 +1,5 @@
 <template>
-  <p class="information" :class="absolute ? 'absolute' : ''">
+  <p class="information mb-0">
     By
     <span class="information__author">{{ postInfo.author }}</span
     ><span class="information__date ml-2">{{
@@ -15,11 +15,7 @@ export default {
     postInfo: {
       type: Object,
       required: true,
-    },
-    absolute: {
-      type: Boolean,
-      required: false,
-    },
+    }
   },
   filters: {
     formatDate(val) {
@@ -35,6 +31,7 @@ export default {
 // style import for Storybook
 @import "assets/scss/main.scss";
 .information {
+  white-space: nowrap;
   color: $grey;
   @media (min-width: 600px) {
     font-size: 16px;
@@ -44,7 +41,6 @@ export default {
   &__author {
     color: $orange;
   }
-
   &__date {
     &:before {
       content: "\a";
@@ -56,12 +52,6 @@ export default {
       margin-bottom: 3px;
       margin-right: 7px;
     }
-  }
-
-  &.absolute {
-    position: absolute;
-    left: 16px;
-    bottom: 0;
   }
 }
 </style>

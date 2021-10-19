@@ -55,7 +55,7 @@
     <div
     ref="spinner"
       class="Articles__spinner-wrapper transition__5"
-      :class="this.ready || this.loaded ? 'hidden' : ''"
+      :class="this.ready || this.getLoaded ? 'hidden' : ''"
     >
       <div class="text-center">
         <b-spinner
@@ -75,7 +75,6 @@ export default {
   components: { Card, ErrorMessage },
   data() {
     return {
-      articles: null,
       currentPage: 1,
       perPage: 12,
       rows: null,
@@ -84,13 +83,22 @@ export default {
       debouncedSearch: "",
       //for not triggering another Api call, when not needed
       ignoreSearch: false,
-      loaded: false
     };
   },
   computed: {
     ...mapGetters({
+      // current array of articles, filtered or all
       getArticles: "api/getArticles",
+      // displays an error API response
       getError: "api/getError",
+      // page number for pagination
+      getPage: "api/getPage",
+      // marking that the app has been initially rendered
+      getLoaded: "api/getLoaded",
+      // provided search input value
+      getSearch: "api/getSearch",
+      //length of the articles array, either filtered or all
+      getLength: "api/getLength"
     }),
 
     // getter and debounced setter for search input value
@@ -110,28 +118,23 @@ export default {
   async mounted() {
 
     // renders previously opened page
-    this.currentPage = this.$store.state.api.page;
-
-    // bounds data variable with a Vuex state item, which marks whether
-    // the app has been rendered yet
-    this.loaded = this.$store.state.api.loaded;
+    this.currentPage = this.getPage;
 
     // depending on whether a search input value is presents, 
     // fetches appropriate articles and array length
-    if (this.$store.state.api.search.length > 0) {
-      await this.getLength(this.$store.state.api.search);
-      await this.getRange({
-        search: this.$store.state.api.search,
+    if (this.getSearch.length > 0) {
+      await this.fetchLength(this.getSearch);
+      await this.fetchRange({
+        search: this.getSearch,
         page: this.currentPage,
       });
       this.ignoreSearch = true;
-      this.search = this.$store.state.api.search;
+      this.search = this.getSearch;
     } else {
-      await this.getLength();
-      await this.getRange({ page: this.currentPage });
+      await this.fetchLength();
+      await this.fetchRange({ page: this.currentPage });
     }
-    this.articles = this.getArticles;
-    this.rows = this.$store.state.api.length;
+    this.rows = this.getLength;
     setTimeout(() => {
 
       // page content is being revealed
@@ -139,22 +142,21 @@ export default {
 
       // marking app rendering as finished (no more welcome spinner)
       this.setAppLoaded()
-    }, 800);
+    }, 700);
   },
   watch: {
-
     // what happens, when a pagination page changes 
     // (for appropriate styling and different Api calls, depending of the search input value)
     currentPage(val) {
       if (val) {
         if (this.$refs.articlesRow)
           this.$refs.articlesRow.classList.add("hidden");
-        if (this.$refs.noResults) this.$refs.noResults.classList.add("hidden");
+        if (this.$refs.noResults) this.$refs.noResults.$el.classList.add("hidden");
         if (this.$refs.error) this.$refs.error.$el.classList.add("hidden");
         if (this.search.length > 0) {
-          this.getRange({ search: this.search, page: val });
+          this.fetchRange({ search: this.search, page: val });
         } else {
-          this.getRange({ page: val });
+          this.fetchRange({ page: val });
         }
         this.setPage(val);
         window.scrollTo(0, 0);
@@ -167,7 +169,6 @@ export default {
         }, 1000);
       }
     },
-
     // captures changes of the search input value
     search() {
       // when the search doesn't have to be ignored, just for appropriate styling (fade-in, fade-out)
@@ -196,9 +197,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getLength: "api/getLength",
-      getRange: "api/getRange",
-      findRecord: "api/findRecord",
+      fetchLength: "api/fetchLength",
+      fetchRange: "api/fetchRange"
     }),
     ...mapMutations({
       setPage: "api/setPage",
@@ -209,26 +209,25 @@ export default {
     //searching articles by key word(s)
     async find(val) { 
       if (val.length > 0) {
-        await this.getLength(val);
+        await this.fetchLength(val);
         // in the first scenario user returns from a post page to the same page as before.
         // used when search input value hasn't changed 
         if (this.ignoreSearch)
-          await this.getRange({ search: val, page: this.currentPage });
+          await this.fetchRange({ search: val, page: this.currentPage });
 
         // used when a new search input value has been provided (displays new results from page 1)  
-        else await this.getRange({ search: val, page: 1 });
+        else await this.fetchRange({ search: val, page: 1 });
 
         // sets current search value in Vuex state
         this.setSearch(val);
       } else {
 
         // if there is no search input value, fetches unfiltered, paginated articles 
-        await this.getLength();
-        await this.getRange({ page: 1 });
+        await this.fetchLength();
+        await this.fetchRange({ page: 1 });
       }
-      this.articles = this.getArticles;
-      this.rows = this.$store.state.api.length;
-      this.currentPage = this.$store.state.api.page;
+      this.rows = this.getLength;
+      this.currentPage = this.getPage;
     },
   },
 };

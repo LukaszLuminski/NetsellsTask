@@ -17,6 +17,5 @@ Default.args = {
   postInfo: {
     author: 'Cheryl Dickinson',
     date: '2021-09-15T01:16:19.162Z'
-  },
-  absolute: false
+  }
 }

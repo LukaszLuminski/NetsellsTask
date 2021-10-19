@@ -15,11 +15,13 @@ export const getters = {
   getPost: state => state.post,
   getArticles: state => state.articles,
   getError: state => state.error,
-  getSearch: state => state.search
+  getSearch: state => state.search,
+  getLength: state => state.length,
+  getLoaded: state => state.loaded
 }
 
 export const actions = {
-  async getLength({ commit }, payload) {
+  async fetchLength({ commit }, payload) {
     try {
       let articles
       if (payload) {
@@ -34,7 +36,7 @@ export const actions = {
     }
 
   },
-  async getRange({ commit }, payload) {
+  async fetchRange({ commit }, payload) {
     try {
       let articles
       if (payload.search) {
@@ -49,7 +51,7 @@ export const actions = {
       commit('setError', err)
     }
   },
-  async getSinglePost({ commit }, payload) {
+  async fetchSinglePost({ commit }, payload) {
     try {
       const post = await this.$axios.$get(`/${payload}`)
       commit('setPost', post)

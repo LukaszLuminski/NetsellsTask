@@ -1,7 +1,6 @@
 <template>
   <article class="Card">
-    <b-img-lazy class="Card__img desktop" :src="post.image" />
-    <div class="Card__img mobile" :src="post.image" />
+    <b-img-lazy class="Card__img" :src="post.image" @load="checkData(post.id)"/>
     <div class="Card__content p-3">
       <header>
         <h4 class="Card__title pb-2" @click="goTo(post.id)">
@@ -10,9 +9,8 @@
       </header>
       <p class="Card__intro">{{ truncate(post.intro, 200) }}</p>
     </div>
-    <footer>
+    <footer class="Card__footer">
       <post-info
-        :absolute="true"
         :postInfo="{ author: post.author, date: post.createdAt }"
       />
     </footer>
@@ -38,6 +36,9 @@ export default {
     goTo(id) {
       this.$router.push({ path: `/${id}` });
     },
+    checkData (id) {
+      console.log(id)
+    }
   },
 };
 </script>
@@ -56,6 +57,7 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     width: 100%;
+    max-height: 262.5px;
   }
   &__title {
     overflow: hidden;
@@ -71,6 +73,18 @@ export default {
   }
   &__content {
     margin-bottom: 28px;
+  }
+  &__footer {
+    p {
+      white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 42px;
   }
 }
 </style>

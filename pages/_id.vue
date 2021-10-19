@@ -67,7 +67,7 @@ export default {
     }),
   },
   async mounted() {
-    await this.getSinglePost(this.id);
+    await this.fetchSinglePost(this.id);
     if (this.$refs.post) this.$refs.post.scrollTop = 0;
     setTimeout(() => {
       this.ready = true;
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getSinglePost: "api/getSinglePost",
+      fetchSinglePost: "api/fetchSinglePost",
     }),
   },
 };
