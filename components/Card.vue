@@ -1,6 +1,7 @@
 <template>
   <article class="Card">
-    <b-img-lazy class="Card__img" :src="post.image" />
+    <b-img-lazy class="Card__img desktop" :src="post.image" />
+    <div class="Card__img mobile" :src="post.image" />
     <div class="Card__content p-3">
       <header>
         <h4 class="Card__title pb-2" @click="goTo(post.id)">
@@ -55,7 +56,7 @@ export default {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     width: 100%;
-    height: auto;
+    max-height: 263px;
     background-position: center top;
   }
   &__title {
